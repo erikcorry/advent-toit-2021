@@ -23,7 +23,7 @@ main:
       row := List COLS_PER_BOARD: | x |
         start := x * CHARS_PER_NUMBER
         end := start + CHARS_PER_NUMBER - 1
-        start += line[start] == ' ' ? 1 : 0
+        while line[start] == ' ': start++
         int.parse line[start..end]  // Last expression in block gives list entry.
       row  // Last expression in block gives list entry.
 
