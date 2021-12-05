@@ -1,5 +1,4 @@
 import .file as file
-import reader show BufferedReader
 
 /**
 Each line has a binary number of the same length.
