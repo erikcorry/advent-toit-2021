@@ -3,13 +3,7 @@ import math
 import reader show BufferedReader
 
 /**
-Each line has a binary number of the same length.
-Finding the oxygen generator rating and the CO2 scrubber rating is an interative process.
-tart with the full list and consider the bits one at a time from the left.
-For each bit position discard values according to the criteria until only one is left.
-Criterion for the oxygen generator rating is having only the most common bit in a given
-position.  For the CO2 scrubber rating it is having only the least common bit.
-The result is oxygen * CO2.
+A pretty slow solution using a big map, but it works.
 */
 main:
   lines := []
