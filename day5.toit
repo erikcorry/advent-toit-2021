@@ -3,7 +3,7 @@ import math
 import reader show BufferedReader
 
 /**
-A pretty slow solution using a big map, but it works.
+A solution that uses a map structure.
 */
 main:
   lines := []
@@ -55,7 +55,7 @@ class Coordinate:
   constructor .x .y:
 
   hash_code -> int:
-    return x * 5 + y * 7
+    return x + y * 1000
 
   operator == other -> bool:
     return x == other.x and y == other.y
