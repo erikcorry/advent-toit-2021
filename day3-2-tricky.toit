@@ -11,11 +11,8 @@ position.  For the CO2 scrubber rating it is having only the least common bit.
 The result is oxygen * CO2.
 */
 main:
-  lines := []
-  reader := BufferedReader
-    file.Stream.for_read "3.txt"
-  while line := reader.read_line:
-    lines.add line
+  lines := (file.read_content "3.txt").to_string.split "\n"
+  lines.remove_last
 
   oxygen := find lines: | zeros ones value position |
     (ones >= zeros) == (value[position] == '1')
@@ -25,11 +22,11 @@ main:
 
   print oxygen * co2
 
-find l/List [criterion]:
-  lines := l
+find lines/List [criterion]:
   lines[0].size.repeat: | position |
-    ones := lines.reduce --initial=0: | s l | s + (l[position] & 1)
+    ones := lines.reduce --initial=0: | sum line | sum + (line[position] & 1)
     lines = lines.filter: criterion.call lines.size - ones ones it position
     if lines.size == 1:
-      return (List lines[0].size: lines[0][it]).reduce --initial=0: | s c | (s << 1) | c & 1
+      return (List lines[0].size: lines[0][it]).reduce --initial=0: | acc char |
+        (acc << 1) | char & 1
   throw "Bad input"
