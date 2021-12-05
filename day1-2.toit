@@ -1,8 +1,10 @@
 import .file as file
 import reader show BufferedReader
 
-/// Find the number of times a sliding window of 3 samples is greater than the
-/// previous sliding window of 3 samples.
+/**
+Find the number of times a sliding window of 3 samples is greater than the
+  previous sliding window of 3 samples.
+*/
 main:
   reader := BufferedReader
     file.Stream.for_read "1.txt"
