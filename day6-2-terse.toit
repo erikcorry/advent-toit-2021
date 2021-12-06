@@ -5,8 +5,7 @@ main:
   reader := reader.BufferedReader
     file.Stream.for_read "6.txt"
   fish := List 9 0
-  reader.read_line.split ",":
-    fish[int.parse it]++
+  reader.read_line.split ",": fish[int.parse it]++
   
   256.repeat:
     fish = List 9:
