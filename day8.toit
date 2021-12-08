@@ -1,8 +1,7 @@
 import .file as file
 import reader show BufferedReader
 
-/// A template that shows how to read a text file and process one line
-/// at a time.
+// https://adventofcode.com/2021/day/8
 main:
   reader := BufferedReader
     file.Stream.for_read "8.txt"
@@ -12,41 +11,29 @@ main:
     i := line.index_of " | "
     displays[line[..i]] = line[i + 3..]
 
+  UNIQUE_SIZES ::= {2: 1, 3: 7, 4: 4, 7: 8}
+
   count := 0
   displays.do: | all_seen current |
     four_digits := current.split " "
     all_seen.split " ": | seen |
-      if seen.size == 2 or seen.size == 4 or seen.size == 3 or seen.size == 7:
+      if UNIQUE_SIZES.contains seen.size:
         four_digits.do: if it.size == seen.size: count++
   print count
-
-  // 2 segments
-  //    1: cf
-  // 3 segments
-  //    7: acf
-  // 4 segments
-  //    4: bcdf  minus 1'< bd
-  // 5 segments:
-  //    2: acdeg
-  //    3: acdfg  // Has both of 1's
-  //    5: abdfg  // Has 4's minus 1's
-  // 6 segments:
-  //    6: not c  // Missing one of 1's
-  //    9: not e
-  //    0: not d  // Missing one of 4's minus 1's
 
   key := List 10
 
   sum := 0
   displays.do: | all_seen current |
+    // Populate the key with the easy ones.
     all_seen.split " ": | seen |
       bits := str_to_bits seen
-      if seen.size == 2: key[1] = bits
-      if seen.size == 3: key[7] = bits
-      if seen.size == 4: key[4] = bits
-      if seen.size == 7: key[8] = bits
+      if UNIQUE_SIZES.contains seen.size:
+        key[UNIQUE_SIZES[seen.size]] = bits
+
     // The segments 4 has, that 1 doesn't have:
     four_minus_one := key[4] & ~key[1]
+
     all_seen.split " ": | seen |
       bits := str_to_bits seen
       if seen.size == 5:
@@ -69,16 +56,13 @@ main:
     four_digits := current.split " ": | digit |
       number *= 10
       bits := str_to_bits digit
-      key.size.repeat:
-        if key[it] == bits: number += it
+      number += key.index_of bits
     sum += number
   print sum
 
 LETTERS ::= ["a", "b", "c", "d", "e", "f", "g"]
 
 str_to_bits str/string -> int:
-  bits := 0
-  LETTERS.do:
-    bits <<= 1
-    if str.contains it: bits |= 1
-  return bits
+  segments := List str.size: str[it] - 'a'
+  return segments.reduce --initial=0: | bits segment |
+    bits | (1 << segment)
