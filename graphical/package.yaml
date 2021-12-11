@@ -1,0 +1,6 @@
+dependencies:
+  color_tft:
+    url: github.com/toitware/toit-color-tft
+    version: ^1.2.0
+  pixel_display:
+    path: ../../Toitware/toit-pixel-display

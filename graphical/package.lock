@@ -1,0 +1,12 @@
+prefixes:
+  color_tft: toit-color-tft
+  pixel_display: toit-pixel-display
+packages:
+  toit-pixel-display:
+    path: ../../Toitware/toit-pixel-display
+  toit-color-tft:
+    url: github.com/toitware/toit-color-tft
+    version: 1.2.0
+    hash: d590954f30b62fa9a28839762dff087a6d19df7c
+    prefixes:
+      pixel_display: toit-pixel-display
