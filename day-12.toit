@@ -14,7 +14,6 @@ main:
     tunnels.add
       Tunnel ends[1] ends[0]
 
-
   // Part 1, you can only visit small caves once.
   paths := [Path "start"]
   go_to_end := []
@@ -22,9 +21,10 @@ main:
     added := []
     paths.do: | path |
       tunnels.do: | tunnel |
-        if path.end == tunnel.from and not path.visited.contains tunnel.to:
-          new_path := Path.previous path --to=tunnel.to
-          if tunnel.to == "end":
+        to := tunnel.to
+        if path.end == tunnel.from and not path.visited.contains to:
+          new_path := Path.previous path --end=to
+          if to == "end":
             go_to_end.add new_path
           else:
             added.add new_path
@@ -44,14 +44,11 @@ main:
     paths.do: | path |
       tunnels.do: | tunnel |
         if path.end == tunnel.from:
-          new_path := null
           to := tunnel.to
-          if not path.visited.contains to:
-            new_path = Path.previous path --to=to
-          else if not path.visited_twice and to != "start" and to != "end":
-            new_path = Path.previous path --to=to --visited_twice=true
-          if new_path:
-            if tunnel.to == "end":
+          if not path.visited.contains to
+              or not path.visited_twice and to != "start" and to != "end":
+            new_path := Path.previous path --end=to
+            if to == "end":
               go_to_end.add new_path
             else:
               added.add new_path
@@ -79,12 +76,12 @@ class Path:
     visited = { end }
     previous = null
 
-  constructor.previous .previous --to/string --.visited_twice/bool=previous.visited_twice:
-    end = to
-    if 'a' <= to[0] <= 'z':
+  constructor.previous .previous --.end/string:
+    visited_twice = previous.visited_twice or previous.visited.contains end
+    if 'a' <= end[0] <= 'z':
       visited = {}
       visited.add_all previous.visited
-      visited.add to
+      visited.add end
     else:
       visited = previous.visited
 
