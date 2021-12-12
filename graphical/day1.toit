@@ -56,6 +56,8 @@ main:
   tft.draw
 
   ctr := 0
+  base_time := Time.now
+  frame_target := Duration --ms=100
 
   while current := reader.read:
     if sliding_window.size >= 3:
@@ -64,7 +66,9 @@ main:
         count++
     seascape.add_depth current
     ctr++
-    if ctr & 1 == 0:
+    relative_time := base_time.to Time.now
+    target_time := frame_target * ctr
+    if relative_time < target_time:
       tft.draw
       sleep --ms=1
 
