@@ -8,6 +8,8 @@ import pixel_display show TrueColorPixelDisplay
 import spi
 import font
 
+import .sub
+
 /**
 Graphical representation of the under-sea landscape in day 1 of Advent of code 2021.
 
@@ -33,9 +35,7 @@ main:
 
   seascape := SeaScape tft
 
-  dark_blue := get_rgb 0 0 40
-
-  tft.background = dark_blue
+  tft.background = BLACK
 
   reader := IntReader INPUT
 
@@ -76,30 +76,19 @@ class SeaScape:
   smallest := 20
   gauges := []
 
-  X ::= 80
-  Y ::= 40
-  W ::= 150
-  H ::= 150
+  X ::= 84
+  Y ::= 20 + 16
+  W ::= 235 - 84
+  H ::= 142 - 20
 
   constructor tft/TrueColorPixelDisplay:
     sans := font.Font.get "sans10"
 
-    frame_context := tft.context --landscape --color=(get_rgb 0x40 0xc0 0x40) --font=sans --alignment=TEXT_TEXTURE_ALIGN_RIGHT
+    frame_context := tft.context --landscape --color=(get_rgb 0x40 0xc0 0x40) --font=sans
 
     dark_blue := get_rgb 0 0 40
-    sea_context := frame_context.with --color=dark_blue
 
-    // Frame.
-    tft.filled_rectangle
-        frame_context
-        X - 2
-        Y - 2
-        W + 4
-        H + 4
-
-    tft.filled_rectangle sea_context X Y W H
-
-    histogram = TrueColorHistogram X Y W H frame_context.transform 1 (get_rgb 0xc0 0xc0 0xd0)
+    histogram = TrueColorHistogram X Y W H frame_context.transform 1 (get_rgb 0x00 0x80 0x00)
     tft.add histogram
 
     gauges.add
@@ -108,6 +97,14 @@ class SeaScape:
       Gauge this 300 tft frame_context
     gauges.add
       Gauge this 400 tft frame_context
+
+    for y := 0; y < 195; y += 16:
+      tiles := SUB[y / 16]
+      for x := 0; x < 320; x += 64:
+        tile := tiles[x / 64]
+        if tile.size != 0:
+          qoi := QoiTexture x y + 16 frame_context.transform tile
+          tft.add qoi
 
   y_for value/int -> int:
     return Y + H - value
@@ -142,16 +139,18 @@ class Gauge:
 
     x = seascape.X
 
+    bright := context.with --color=(get_rgb 0 0xff 0)
+
     text = tft.text context
-        x - 20
+        x + 4
         tick_y + 4
         "$value"
 
-    tick = tft.line context
+    /*tick = tft.line context
         x - 18
         tick_y
         x - 2
-        tick_y
+        tick_y*/
 
   tick_y -> int:
     return seascape.y_for
@@ -160,11 +159,11 @@ class Gauge:
   adjust -> none:
     y := tick_y
     text.move_to
-      x - 20
+      x + 4
       y + 4
-    tick.move_to
+    /*tick.move_to
       x - 18
-      y
+      y*/
 
   move_down offset/int -> none:
     value += offset
