@@ -4,7 +4,7 @@ Assuming you have built the [Open Source version of Toit](https://github.com/toi
 you can run these with:
 
 ```
-$ /path/to/checkout/build/host/bin/toitvm 1.toit
+$ /path/to/checkout/build/host/sdk/bin/toitvm 1.toit
 ```
 
 If you want to see how to read files in Toit, but you don't want
