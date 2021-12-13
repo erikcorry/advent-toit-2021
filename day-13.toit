@@ -6,9 +6,13 @@ main:
   reader := BufferedReader
     file.Stream.for_read "13.txt"
 
+  // We use a Set for the sheet of dots so that we don't have to know the size
+  // ahead of time, and dots that coincide will not cause duplicates.
   sheet := Set
+
   while line := reader.read_line:
     if line == "": break
+    // Read line in format "12,34".
     coords := (line.split ",").map: int.parse it
     sheet.add
       Coordinate coords[0] coords[1]
@@ -16,6 +20,7 @@ main:
   printed := false
 
   while line := reader.read_line:
+    // Read line in format "fold along x=123".
     at := int.parse line[13..]
     if line[11] == 'x':
       sheet = fold_x sheet at
@@ -25,12 +30,18 @@ main:
       print sheet.size
       printed = true
 
-  height := sheet.reduce --initial=0: | a b | max a b.y
-  width := sheet.reduce --initial=0: | a b | max a b.x
+  // Find largest coordinates.
+  height := sheet.reduce --initial=0: | a b | max a (b.y + 1)
+  width := sheet.reduce --initial=0: | a b | max a (b.x + 1)
 
-  grid := List height + 1:
-    ByteArray width + 1: ' '
+  // Make a list of ByteArrays filled with space characters.
+  grid := List height:
+    ByteArray width: ' '
+
+  // Replace spaces with hashes at the points.
   sheet.do: grid[it.y][it.x] = '#'
+
+  // Print the grid.
   grid.do: print it.to_string
 
 fold_y sheet/Set at/int -> Set:
