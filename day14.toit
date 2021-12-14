@@ -2,6 +2,8 @@ import .file as file
 import reader show BufferedReader
 import bytes show Buffer
 
+// Increments the value for a given key in the map, starting at 0 if the key
+// was not present.
 inc map/Map key --by/int=1 -> none:
   map[key] = (map.get key --if_absent=(: 0)) + by
 
@@ -51,12 +53,11 @@ main:
   print_most_minus_least_frequent pair_counts last_char
 
 print_most_minus_least_frequent pair_counts/Map last_char/int -> none:
-  element_counts := {:}
+  element_counts := {last_char: 1}
 
   pair_counts.do: | pair count |
     first := pair[0]
     inc element_counts first --by=count
-  inc element_counts last_char
   biggest := element_counts.values.reduce: | a b | max a b
   smallest := element_counts.values.reduce: | a b | min a b
   print biggest - smallest
